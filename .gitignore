@@ -1,1 +1,9 @@
+/.vscode
+
 *.pem
+*.dot
+
+*.tfplan
+*.tfstate
+terraform.*
+*/.terraform

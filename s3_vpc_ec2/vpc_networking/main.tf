@@ -2,6 +2,10 @@ provider "aws" {
   region = var.region
 }
 
+provider "google" {
+  region = var.region
+}
+
 resource "aws_vpc" "module_vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
@@ -16,7 +20,7 @@ resource "aws_subnet" "module_public_subnet_1" {
   vpc_id            = aws_vpc.module_vpc.id
   availability_zone = "${var.region}a"
 
-  tags {
+  tags = {
     Name = " Public-Subnet-1"
   }
 }
@@ -26,7 +30,7 @@ resource "aws_subnet" "module_public_subnet_2" {
   vpc_id            = aws_vpc.module_vpc.id
   availability_zone = "${var.region}b"
 
-  tags {
+  tags = {
     Name = " Public-Subnet-2"
   }
 }
@@ -36,7 +40,7 @@ resource "aws_subnet" "module_public_subnet_3" {
   vpc_id            = aws_vpc.module_vpc.id
   availability_zone = "${var.region}c"
 
-  tags {
+  tags = {
     Name = " Public-Subnet-3"
   }
 }
@@ -46,7 +50,7 @@ resource "aws_subnet" "module_private_subnet_1" {
   vpc_id            = aws_vpc.module_vpc.id
   availability_zone = "${var.region}a"
 
-  tags {
+  tags = {
     Name = "Private-Subnet-1"
   }
 }
@@ -56,7 +60,7 @@ resource "aws_subnet" "module_private_subnet_2" {
   vpc_id            = aws_vpc.module_vpc.id
   availability_zone = "${var.region}b"
 
-  tags {
+  tags = {
     Name = "Private-Subnet-2"
   }
 }
@@ -66,7 +70,7 @@ resource "aws_subnet" "module_private_subnet_3" {
   vpc_id            = aws_vpc.module_vpc.id
   availability_zone = "${var.region}c"
 
-  tags {
+  tags = {
     Name = "Private-Subnet-3"
   }
 }
@@ -74,7 +78,7 @@ resource "aws_subnet" "module_private_subnet_3" {
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.module_vpc.id
 
-  tags {
+  tags = {
     Name = "Public-Route-Table"
   }
 }
@@ -82,7 +86,7 @@ resource "aws_route_table" "public_route_table" {
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.module_vpc.id
 
-  tags {
+  tags = {
     Name = "Private-Route-Table"
   }
 }
@@ -130,7 +134,7 @@ resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.elastic_ip_for_net_gw.id
   subnet_id     = aws_subnet.module_public_subnet_1.id
 
-  tags {
+  tags = {
     Name = "Production-NAT-GW"
   }
 }
@@ -144,7 +148,7 @@ resource "aws_route" "nat_gw_route" {
 resource "aws_internet_gateway" "internet_gw" {
   vpc_id = aws_vpc.module_vpc.id
 
-  tags {
+  tags = {
     Name = "Production-IGW"
   }
 }
@@ -174,7 +178,7 @@ resource "aws_instance" "terra_ec2_instance" {
   security_groups = [aws_security_group.ec2-security-group.id]
   subnet_id       = aws_subnet.module_public_subnet_1.id
 
-  # user_data = "ansible script goes here!"
+  user_data = "ansible script goes here!"
 }
 
 resource "aws_security_group" "ec2-security-group" {
@@ -183,14 +187,14 @@ resource "aws_security_group" "ec2-security-group" {
 
   ingress {
     from_port   = 0
-    protocal    = "-1"
+    protocol    = "-1"
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
     from_port   = 0
-    protocal    = "-1"
+    protocol    = "-1"
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
